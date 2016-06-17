@@ -72,7 +72,7 @@ class Conference(StoredObject):
 class ConferenceSponsor(StoredObject):
     _id = fields.StringField(default=lambda: str(ObjectId()))
     name = fields.StringField(required=True, default=None)
-    logo_url = fields.StringField(required=False, default=None)
+    logoURL = fields.StringField(required=False, default=None)
 
 
 class MailRecord(StoredObject):
