@@ -6,6 +6,8 @@ from modularodm.exceptions import ModularOdmException
 
 from framework.mongo import StoredObject
 from website.conferences.exceptions import ConferenceError
+from website.project.model import Tag, Pointer
+import datetime
 
 DEFAULT_FIELD_NAMES = {
     'submission1': 'poster',
@@ -18,7 +20,6 @@ DEFAULT_FIELD_NAMES = {
     'mail_message_body': 'Presentation abstract (if any)',
     'mail_attachment': 'Your presentation file (e.g., PowerPoint, PDF, etc.)'
 }
-
 
 class Conference(StoredObject):
     #: Determines the email address for submission and the OSF url
@@ -33,6 +34,20 @@ class Conference(StoredObject):
     location = fields.StringField(required=False, default=None)
     start_date = fields.DateTimeField(default=None)
     end_date = fields.DateTimeField(default=None)
+    submissionStartDate = fields.DateTimeField(default=None)
+    submissionEndDate = fields.DateTimeField(default=None)
+    reviewDeadlineDate = fields.DateTimeField(default=None)
+    tags = fields.ForeignField('tag', list=True)
+    # sponsors have a name and a url to an image
+    # Format : {
+    #   name: sponsorsName,
+    #   imageURL: imageURL
+    # }
+    sponsors = fields.DictionaryField(list=True)
+    description = fields.StringField(required=True, default=None)
+    dateCreated = fields.DateTimeField(default=datetime.datetime.now)
+    dateModified = fields.DateTimeField(default=None)
+    linkedNodes = fields.ForeignField('pointer', list=True)
     active = fields.BooleanField(required=True)
     admins = fields.ForeignField('user', list=True, required=False, default=None)
     #: Whether to make submitted projects public
