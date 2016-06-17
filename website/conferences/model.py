@@ -41,7 +41,7 @@ class Conference(StoredObject):
     submissionEndDate = fields.DateTimeField(default=None)
     reviewDeadlineDate = fields.DateTimeField(default=None)
     tags = fields.ForeignField('tag', list=True)
-    sponsors = fields.ForeignField('conferenceSponsor', list=True)
+    sponsors = fields.ForeignField('conferenceSponsor', list=True, default=None)
     description = fields.StringField(required=True, default=None)
     dateCreated = fields.DateTimeField(default=datetime.datetime.now)
     dateModified = fields.DateTimeField(default=None)
