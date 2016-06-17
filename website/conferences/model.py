@@ -4,9 +4,11 @@ import bson
 from modularodm import fields, Q
 from modularodm.exceptions import ModularOdmException
 
-from framework.mongo import StoredObject
+from framework.mongo import StoredObject, ObjectId
+
 from website.conferences.exceptions import ConferenceError
 from website.project.model import Tag, Pointer
+
 import datetime
 
 DEFAULT_FIELD_NAMES = {
@@ -26,6 +28,7 @@ class Conference(StoredObject):
     # Example: If endpoint is spsp2014, then submission email will be
     # spsp2014-talk@osf.io or spsp2014-poster@osf.io and the OSF url will
     # be osf.io/view/spsp2014
+    _id = fields.StringField(default=lambda: str(ObjectId()))
     endpoint = fields.StringField(primary=True, required=True, unique=True)
     #: Full name, e.g. "SPSP 2014"
     name = fields.StringField(required=True)
@@ -38,12 +41,7 @@ class Conference(StoredObject):
     submissionEndDate = fields.DateTimeField(default=None)
     reviewDeadlineDate = fields.DateTimeField(default=None)
     tags = fields.ForeignField('tag', list=True)
-    # sponsors have a name and a url to an image
-    # Format : {
-    #   name: sponsorsName,
-    #   imageURL: imageURL
-    # }
-    sponsors = fields.DictionaryField(list=True)
+    sponsors = fields.ForeignField('conferenceSponsor', list=True)
     description = fields.StringField(required=True, default=None)
     dateCreated = fields.DateTimeField(default=datetime.datetime.now)
     dateModified = fields.DateTimeField(default=None)
@@ -70,6 +68,11 @@ class Conference(StoredObject):
             return Conference.find_one(query)
         except ModularOdmException:
             raise ConferenceError('Endpoint {0} not found'.format(endpoint))
+
+class ConferenceSponsor(StoredObject):
+    _id = _id = fields.StringField(default=lambda: str(ObjectId()))
+    name = fields.StringField(required=True, default=None)
+    logo_url = fields.StringField(required=False, default=None)
 
 
 class MailRecord(StoredObject):
