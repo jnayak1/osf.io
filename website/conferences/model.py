@@ -70,7 +70,7 @@ class Conference(StoredObject):
             raise ConferenceError('Endpoint {0} not found'.format(endpoint))
 
 class ConferenceSponsor(StoredObject):
-    _id = _id = fields.StringField(default=lambda: str(ObjectId()))
+    _id = fields.StringField(default=lambda: str(ObjectId()))
     name = fields.StringField(required=True, default=None)
     logo_url = fields.StringField(required=False, default=None)
 
