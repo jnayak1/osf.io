@@ -74,25 +74,28 @@ class IsSubmissionContributor(permissions.BasePermission):
 
 # IsOSFAdmin
 # 	-GOD
+
 # isAdmin
 # 	- All actions on and relating to their conference
+
 # isPublic
 # 	-GET a conference
 # 	-GET conference list
 # 	-GET a submission
-# Approved submission only
+# 		-Approved submission only
 # 	-GET submission list
-# Approved submissions
+# 		-Approved submissions
 # CurrentOsfUser
 # 	-GET conference list
 # 	-GET conference
 # 	-POST a conference
 # 	-POST a submission
 # 	-GET submission
-# Approved submissions
+# 		-Approved submissions
 # 	-GET submission list
-# Approved submissions
+# 		-Approved submissions
 # 	-POST a submission evaluation
+
 # IsSubmissionContributor
 # 	-PUT a submission
 # 		-Edit without changing submission status
