@@ -45,7 +45,6 @@ class IsSubmissionContributor(permissions.BasePermission):
 		# else, like IsPublic
 
 
-
 # Conference List
 # A conference detail
 # 	A conference submission list
@@ -80,7 +79,7 @@ class IsSubmissionContributor(permissions.BasePermission):
 # isPublic
 # 	-GET a conference
 # 	-GET conference list
-# -GET a submission
+# 	-GET a submission
 # Approved submission only
 # 	-GET submission list
 # Approved submissions
@@ -96,12 +95,12 @@ class IsSubmissionContributor(permissions.BasePermission):
 # 	-POST a submission evaluation
 # IsSubmissionContributor
 # 	-PUT a submission
-# Edit without changing submission status
+# 		-Edit without changing submission status
 # 	-DELETE a submission
 # 	-GET submission
-# currentUser submission and approved submissions
+# 		-currentUser submission and approved submissions
 # 	-GET submission list
-# currentUser submissions and approved submissions
+# 		-currentUser submissions and approved submissions
 
 
 
