@@ -8,21 +8,37 @@ from website.project.metadata.utils import is_prereg_admin
 from website.util import permissions as osf_permissions
 
 from api.base.utils import get_user_auth
+from admin.base.utils import OSFAdmin
+
+class IsOSFAdmin(permissions.BasePermission):
+	def has_object_permission(self, request, view, obj):
+		assert isinstance(obj, (Conference, Pointer, Node)), 'obj must be a Conference, Pointer or Node, got {}'.format(obj)
+		return request.user.is_in_group('osf_admin')
+
+class IsPublic(permissions.BasePermission):
+	def has_object_permission(self, request, view, obj):
+		assert isinstance(obj, (Conference, Pointer, Node)), 'obj must be a Conference, Pointer or Node, got {}'.format(obj)
+		return request.method in permissions.SAFE_METHODS
 
 class IsAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        assert isinstance(obj, Conference), 'obj must be a Conference, got {}'.format(obj)
+        assert isinstance(obj, (Conference, Pointer, Node)), 'obj must be a Conference, Pointer or Node got {}'.format(obj)
         auth = get_user_auth(request)
-        node = Node.load(request.parser_context['kwargs']['node_id'])
-        return node.has_permission(auth.user, osf_permissions.ADMIN)
+        if isinstance(obj, Conference)
+        	return request.user in obj.admins
+        if isinstance(obj, Pointer)
+        	Conference.objects.filter(linkedNodes)
+        	return 0
+        # If admin for conference, return true
 
-class AdminOrPublic(permissions.BasePermission):
+class CurrentOsfUser(permissions.BasePermission):
+	def has_object_permission(self, request, view, obj):
+		assert isinstance(obj, (Conference, Pointer, Node)), 'obj must be a Conference, got {}'.format(obj)
+		auth = get_user_auth(request)
 
-    def has_object_permission(self, request, view, obj):
-        assert isinstance(obj, Conference), 'obj must be a Node, User, Institution, or Draft Registration, got {}'.format(obj)
-        auth = get_user_auth(request)
-        conference = Conference.load(request.parser_context['kwargs'][view.node_lookup_url_kwarg])
-        if request.method in permissions.SAFE_METHODS:
-            return node.is_public or node.can_view(auth)
-        else:
-            return node.has_permission(auth.user, osf_permissions.ADMIN)
+class IsSubmissionContributor(permissions.BasePermission):
+	def has_object_permission(self, request, view, obj):
+		assert isinstance(obj, (Conference, Pointer, Node)), 'obj must be a Conference, got {}'.format(obj)
+		auth = get_user_auth(request)
+		# If submission, and if submission author, PUT, DELETE, GET submission
+		# else, like IsPublic

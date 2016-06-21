@@ -45,7 +45,7 @@ class Conference(StoredObject):
     description = fields.StringField(required=True, default=None)
     dateCreated = fields.DateTimeField(default=datetime.datetime.now)
     dateModified = fields.DateTimeField(default=None)
-    linkedNodes = fields.ForeignField('pointer', list=True)
+    linkedNodes = fields.ForeignField('conference', list=True)
     permissions = fields.DictionaryField()
     active = fields.BooleanField(required=True)
     admins = fields.ForeignField('user', list=True, required=False, default=None)
@@ -149,11 +149,14 @@ class Conference(StoredObject):
         """
         return self.permissions.get(user._id, [])
 
+class ConferenceSubmission(Pointer):
+    conference = fields.ForeignField('conference', required=True)
+
+
 class ConferenceSponsor(StoredObject):
     _id = fields.StringField(default=lambda: str(ObjectId()))
     name = fields.StringField(required=True, default=None)
     logoURL = fields.StringField(required=False, default=None)
-
 
 class MailRecord(StoredObject):
     _id = fields.StringField(primary=True, default=lambda: str(bson.ObjectId()))
