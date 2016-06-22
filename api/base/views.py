@@ -464,6 +464,7 @@ def root(request, format=None):
         'links': {
             'nodes': absolute_reverse('nodes:node-list'),
             'users': absolute_reverse('users:user-list'),
+            #'conferences': absolute_reverse('conferences:conference-list'),
         }
     }
     if settings.DEV_MODE:

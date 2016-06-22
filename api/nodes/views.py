@@ -286,6 +286,7 @@ class NodeList(JSONAPIBaseView, bulk_views.BulkUpdateJSONAPIView, bulk_views.Bul
             return nodes
         else:
             query = self.get_query_from_request()
+            print(Node.find(query).get_keys())
             return Node.find(query)
 
     # overrides ListBulkCreateJSONAPIView, BulkUpdateJSONAPIView, BulkDestroyJSONAPIView
