@@ -37,15 +37,15 @@ class Conference(StoredObject):
     location = fields.StringField(required=False, default=None)
     start_date = fields.DateTimeField(default=None)
     end_date = fields.DateTimeField(default=None)
-    submissionStartDate = fields.DateTimeField(default=None)
-    submissionEndDate = fields.DateTimeField(default=None)
-    reviewDeadlineDate = fields.DateTimeField(default=None)
+    submission_start_date = fields.DateTimeField(default=None)
+    submission_end_date = fields.DateTimeField(default=None)
+    review_deadline_date = fields.DateTimeField(default=None)
     tags = fields.ForeignField('tag', list=True)
     sponsors = fields.ForeignField('conferenceSponsor', list=True, default=None)
     description = fields.StringField(required=True, default=None)
-    dateCreated = fields.DateTimeField(default=datetime.datetime.now)
-    dateModified = fields.DateTimeField(default=None)
-    linkedNodes = fields.ForeignField('pointer', list=True)
+    date_created = fields.DateTimeField(default=datetime.datetime.now)
+    date_modified = fields.DateTimeField(default=None)
+    linked_nodes = fields.ForeignField('pointer', list=True)
     active = fields.BooleanField(required=True)
     admins = fields.ForeignField('user', list=True, required=False, default=None)
     #: Whether to make submitted projects public
@@ -72,7 +72,7 @@ class Conference(StoredObject):
 class ConferenceSponsor(StoredObject):
     _id = fields.StringField(default=lambda: str(ObjectId()))
     name = fields.StringField(required=True, default=None)
-    logoURL = fields.StringField(required=False, default=None)
+    logo_url = fields.StringField(required=False, default=None)
 
 
 class MailRecord(StoredObject):
