@@ -12,38 +12,54 @@ from admin.base.utils import OSFAdmin
 
 class IsOSFAdmin(permissions.BasePermission):
 	def has_object_permission(self, request, view, obj):
-		assert isinstance(obj, (Conference, ConferenceSubmission, Node)), 'obj must be a Conference, or Conference Submission, got {}'.format(obj)
+		assert isinstance(obj, (Conference, ConferenceSubmission)), 'obj must be a Conference, or Conference Submission, got {}'.format(obj)
 		return request.user.is_in_group('osf_admin')
 
 class IsPublic(permissions.BasePermission):
 	def has_object_permission(self, request, view, obj):
 		assert isinstance(obj, (Conference, ConferenceSubmission)), 'obj must be a Conference, or ConferenceSubmission, got {}'.format(obj)
-		return request.method in permissions.SAFE_METHODS
+		if isinstance(obj, Conference):
+			return request.method in permissions.SAFE_METHODS
+		elif request.method in permissions.SAFE_METHODS:
+			return not obj.pending and not obj.declined
 
 class IsAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         assert isinstance(obj, (Conference, ConferenceSubmission)), 'obj must be a Conference, or ConferenceSubmission, got {}'.format(obj)
-        auth = get_user_auth(request)
-        if isinstance(obj, Conference)
+        if isinstance(obj, Conference):
         	return request.user in obj.admins
-        if isinstance(obj, ConferenceSubmission)
+        else: #ConferenceSubmission
         	return request.user in obj.conference.admins
 
 class CurrentOsfUser(permissions.BasePermission):
 	def has_object_permission(self, request, view, obj):
-		assert isinstance(obj, (Conference, Pointer)), 'obj must be a Conference, or ConferenceSubmission, got {}'.format(obj)
-		auth = get_user_auth(request)
-		if request.method in permissions.SAFE_METHODS:
-			return True
-		# TODO: POST methods
+		assert isinstance(obj, (Conference, ConferenceSubmission)), 'obj must be a Conference, or ConferenceSubmission, got {}'.format(obj)
+		if not request.user.is_authenticated():
+			return False
+		if isinstance(obj, Conference):
+			return request.method in permissions.SAFE_METHODS or request.method == 'POST'
+		else: # ConferenceSubmission
+			if request.method in permissions.SAFE_METHODS and not obj.pending and not obj.declined:
+				return True
+			elif request.method == 'POST':
+				return True
+
 
 class IsSubmissionContributor(permissions.BasePermission):
 	def has_object_permission(self, request, view, obj):
-		assert isinstance(obj, (Conference, Pointer, Node)), 'obj must be a Conference, or ConferenceSubmission, got {}'.format(obj)
+		assert isinstance(obj, (Conference, ConferenceSubmission)), 'obj must be a Conference, or ConferenceSubmission, got {}'.format(obj)
 		auth = get_user_auth(request)
-		# If submission, and if submission author, PUT, DELETE, GET submission
-		# else, like IsPublic
-
+		if not request.user.is_authenticated():
+			return False
+		if isinstance(obj, Conference):
+			return request.method in permissions.SAFE_METHODS or request.method == 'POST'
+		else: #ConferenceSubmission
+			if request.method in permissions.SAFE_METHODS:
+				return not obj.pending and not obj.declined
+			elif request.method == 'POST':
+				return True
+			else: 
+				return request.method in ('PUT', 'DELETE') and request.user == obj.creator
 
 # Conference List
 # A conference detail
@@ -85,21 +101,25 @@ class IsSubmissionContributor(permissions.BasePermission):
 # 		-Approved submission only
 # 	-GET submission list
 # 		-Approved submissions
+
 # CurrentOsfUser
-# 	-GET conference list
-# 	-GET conference
-# 	-POST a conference
+# 	-GET conference list (done)
+# 	-GET conference (done)
+# 	-POST a conference (done)
 # 	-POST a submission
-# 	-GET submission
+# 	-GET submission (done)
 # 		-Approved submissions
-# 	-GET submission list
+# 	-GET submission list (done)
 # 		-Approved submissions
-# 	-POST a submission evaluation
+# 	-POST a submission evaluation 
 
 # IsSubmissionContributor
 # 	-PUT a submission
 # 		-Edit without changing submission status
 # 	-DELETE a submission
+# 	-POST a submission
+# 	-GET conference
+# 	-GET conference list
 # 	-GET submission
 # 		-currentUser submission and approved submissions
 # 	-GET submission list

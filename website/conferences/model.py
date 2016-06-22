@@ -47,6 +47,8 @@ class Conference(StoredObject):
     dateModified = fields.DateTimeField(default=None)
     linkedNodes = fields.ForeignField('conference', list=True)
     permissions = fields.DictionaryField()
+    pending = fields.BooleanField(default=True)
+    declined = fields.BooleanField(default=False)
     active = fields.BooleanField(required=True)
     admins = fields.ForeignField('user', list=True, required=False, default=None)
     #: Whether to make submitted projects public
@@ -149,7 +151,7 @@ class Conference(StoredObject):
         """
         return self.permissions.get(user._id, [])
 
-class ConferenceSubmission(Pointer):
+class ConferenceSubmission(Node):
     conference = fields.ForeignField('conference', required=True)
 
 
